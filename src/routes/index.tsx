@@ -132,7 +132,7 @@ function LoveLetter() {
         const line = window.innerHeight * 0.6;
         nodes.forEach((n) => {
           if (n.getBoundingClientRect().top <= line) {
-            current = Number(n.dataset.reason);
+            current = Number(n.dataset['reason']);
           }
         });
         setCount(Math.min(Math.max(current, 1), reasons.length));
