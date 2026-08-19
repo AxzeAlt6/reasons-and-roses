@@ -68,11 +68,11 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.21 0.028 62);
-  --foreground: oklch(0.92 0.02 85);
-  --gold: oklch(0.82 0.13 84);
-  --gold-deep: oklch(0.68 0.13 78);
-  --bloom: oklch(0.55 0.07 88);
+  --background: oklch(0.97 0.03 95);
+  --foreground: oklch(0.35 0.06 60);
+  --gold: oklch(0.72 0.14 82);
+  --gold-deep: oklch(0.62 0.13 72);
+  --bloom: oklch(0.8 0.1 95);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
@@ -155,10 +155,10 @@
 @layer base {
   body {
     background-image:
-      radial-gradient(circle at 15% 6%, oklch(0.45 0.09 82 / 0.55), transparent 48%),
-      radial-gradient(circle at 85% 26%, oklch(0.38 0.08 60 / 0.5), transparent 45%),
-      radial-gradient(circle at 50% 92%, oklch(0.35 0.06 40 / 0.5), transparent 55%),
-      linear-gradient(180deg, oklch(0.22 0.03 64), oklch(0.16 0.025 50));
+      radial-gradient(circle at 12% 8%, oklch(0.95 0.08 95 / 0.55), transparent 45%),
+      radial-gradient(circle at 88% 22%, oklch(0.93 0.07 82 / 0.5), transparent 40%),
+      radial-gradient(circle at 50% 88%, oklch(0.94 0.06 90 / 0.5), transparent 55%),
+      linear-gradient(180deg, oklch(0.99 0.025 95), oklch(0.94 0.03 85));
     background-attachment: fixed;
   }
 }
@@ -168,8 +168,8 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.18;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90'%3E%3Cg fill='%23e6c76a' fill-opacity='0.45'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3Ccircle cx='20' cy='12' r='3'/%3E%3Ccircle cx='20' cy='28' r='3'/%3E%3Ccircle cx='12' cy='20' r='3'/%3E%3Ccircle cx='28' cy='20' r='3'/%3E%3Ccircle cx='65' cy='65' r='2.5'/%3E%3Ccircle cx='65' cy='58' r='2.5'/%3E%3Ccircle cx='65' cy='72' r='2.5'/%3E%3Ccircle cx='58' cy='65' r='2.5'/%3E%3Ccircle cx='72' cy='65' r='2.5'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.22;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90'%3E%3Cg fill='%23d4af37' fill-opacity='0.35'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3Ccircle cx='20' cy='12' r='3'/%3E%3Ccircle cx='20' cy='28' r='3'/%3E%3Ccircle cx='12' cy='20' r='3'/%3E%3Ccircle cx='28' cy='20' r='3'/%3E%3Ccircle cx='65' cy='65' r='2.5'/%3E%3Ccircle cx='65' cy='58' r='2.5'/%3E%3Ccircle cx='65' cy='72' r='2.5'/%3E%3Ccircle cx='58' cy='65' r='2.5'/%3E%3Ccircle cx='72' cy='65' r='2.5'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 .reason-card {
@@ -177,11 +177,11 @@
   align-items: flex-start;
   gap: 0.75rem;
   border-radius: var(--radius-2xl);
-  border: 1px solid oklch(0.6 0.07 84 / 0.35);
-  background: oklch(0.27 0.03 66 / 0.72);
+  border: 1px solid oklch(0.82 0.06 85 / 0.45);
+  background: oklch(1 0.01 90 / 0.78);
   backdrop-filter: blur(6px);
   padding: 0.9rem 1.1rem;
-  box-shadow: 0 8px 24px oklch(0.1 0.02 60 / 0.5);
+  box-shadow: 0 8px 24px oklch(0.55 0.04 75 / 0.14);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
@@ -202,15 +202,15 @@
   flex-shrink: 0;
   font-weight: 700;
   font-size: 0.85rem;
-  color: var(--gold);
-  background: oklch(0.33 0.05 74);
+  color: var(--gold-deep);
+  background: oklch(0.98 0.02 90);
   border-radius: 999px;
   padding: 0.25rem 0.6rem;
 }
 
 .reason-text {
   font-size: 1rem;
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--foreground);
 }
 
@@ -225,13 +225,13 @@
   gap: 0.4rem;
   border-radius: 999px;
   border: 1px solid var(--gold);
-  background: oklch(0.24 0.03 64 / 0.85);
+  background: oklch(1 0.01 90 / 0.88);
   backdrop-filter: blur(8px);
   padding: 0.35rem 0.9rem;
   font-weight: 700;
   font-size: 0.85rem;
-  color: var(--gold);
-  box-shadow: 0 4px 18px oklch(0.1 0.02 60 / 0.5);
+  color: var(--gold-deep);
+  box-shadow: 0 4px 18px oklch(0.55 0.04 75 / 0.18);
 }
 
 .music-dock {
@@ -252,9 +252,9 @@
   max-width: 100%;
   border-radius: 999px;
   border: 2px solid var(--gold);
-  background: linear-gradient(135deg, oklch(0.34 0.05 76), oklch(0.26 0.04 62));
+  background: linear-gradient(135deg, oklch(1 0.01 90), oklch(0.96 0.02 85));
   padding: 0.5rem 1.1rem 0.5rem 0.55rem;
-  box-shadow: 0 8px 22px oklch(0.72 0.1 85 / 0.3);
+  box-shadow: 0 8px 22px oklch(0.55 0.04 75 / 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -270,8 +270,8 @@
   flex-shrink: 0;
   border-radius: 999px;
   border: 2px solid var(--gold);
-  background: oklch(0.22 0.03 62);
-  color: var(--gold);
+  background: oklch(1 0.01 90);
+  color: var(--gold-deep);
   font-size: 1.05rem;
 }
 
@@ -282,7 +282,7 @@
   text-align: left;
   font-weight: 700;
   font-size: 0.95rem;
-  color: var(--gold);
+  color: var(--gold-deep);
   line-height: 1.15;
 }
 
@@ -290,7 +290,7 @@
   font-style: normal;
   font-weight: 500;
   font-size: 0.7rem;
-  color: oklch(0.75 0.04 80);
+  color: oklch(0.55 0.04 70);
 }
 
 @media (max-width: 768px) {
@@ -303,9 +303,9 @@
   margin: 1.25rem 0;
   border-radius: var(--radius-3xl);
   overflow: hidden;
-  border: 1px solid oklch(0.6 0.07 84 / 0.4);
-  background: oklch(0.25 0.03 64 / 0.8);
-  box-shadow: 0 14px 40px oklch(0.08 0.02 60 / 0.6);
+  border: 1px solid oklch(0.82 0.06 85 / 0.45);
+  background: oklch(1 0.01 90 / 0.82);
+  box-shadow: 0 14px 40px oklch(0.55 0.04 75 / 0.18);
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
 
@@ -313,7 +313,6 @@
   display: block;
   width: 100%;
   height: auto;
-  filter: saturate(0.92) brightness(0.92) contrast(1.05);
 }
 
 .photo-caption {
@@ -321,5 +320,5 @@
   text-align: center;
   font-family: var(--font-script);
   font-size: 1.35rem;
-  color: var(--gold);
+  color: var(--gold-deep);
 }
