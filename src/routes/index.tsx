@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "500 Reasons Why I Love You" },
       {
         property: "og:description",
-        content: "A moody, candle-lit love letter with 500 reasons, our photos and our song.",
+        content: "A warm, sunny digital love letter with 500 reasons, our photos, and our song.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
