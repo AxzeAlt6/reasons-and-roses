@@ -300,25 +300,57 @@
 
 .photo-card {
   list-style: none;
-  margin: 1.25rem 0;
-  border-radius: var(--radius-3xl);
-  overflow: hidden;
-  border: 1px solid oklch(0.82 0.06 85 / 0.45);
-  background: oklch(1 0.01 90 / 0.82);
-  box-shadow: 0 14px 40px oklch(0.55 0.04 75 / 0.18);
+  margin: 2rem auto;
+  width: min(100%, 20rem);
+  padding: 0.85rem 0.85rem 0.4rem;
+  border-radius: 4px;
+  background: linear-gradient(180deg, oklch(0.995 0.005 95) 0%, oklch(0.97 0.015 90) 100%);
+  box-shadow:
+    0 1px 0 oklch(1 0 0 / 0.9) inset,
+    0 18px 34px oklch(0.5 0.05 70 / 0.28),
+    0 3px 8px oklch(0.5 0.05 70 / 0.18);
+  transform-origin: center;
   transition: opacity 0.7s ease, transform 0.7s ease;
+  position: relative;
+}
+
+.photo-card::before {
+  content: "";
+  position: absolute;
+  top: -0.7rem;
+  left: 50%;
+  width: 5.5rem;
+  height: 1.5rem;
+  transform: translateX(-50%) rotate(-2deg);
+  background: oklch(0.93 0.05 95 / 0.7);
+  box-shadow: 0 2px 6px oklch(0.5 0.05 70 / 0.15);
+  border-radius: 2px;
+}
+
+.photo-card:nth-of-type(even) {
+  rotate: 1.8deg;
+}
+
+.photo-card:nth-of-type(odd) {
+  rotate: -2deg;
 }
 
 .photo-img {
   display: block;
   width: 100%;
   height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  background: oklch(0.9 0.02 85);
+  box-shadow: 0 0 0 1px oklch(0.75 0.03 80 / 0.35);
 }
 
 .photo-caption {
-  padding: 0.7rem 1rem 0.9rem;
+  padding: 0.85rem 0.5rem 0.9rem;
   text-align: center;
   font-family: var(--font-script);
-  font-size: 1.35rem;
+  font-size: 1.3rem;
+  line-height: 1.2;
   color: var(--gold-deep);
 }
+
