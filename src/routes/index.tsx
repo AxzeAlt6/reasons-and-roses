@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { reasons } from "@/data/reasons";
 import song from "@/assets/our-song.mp3.asset.json";
 import p1 from "@/assets/photo1.jpeg.asset.json";
@@ -213,12 +213,10 @@ function LoveLetter() {
           const photoIndex = (i + 1) % step === 0 ? (i + 1) / step - 1 : -1;
           const photo = photoIndex >= 0 ? photos[photoIndex] : undefined;
           return (
-            <>
-              <ReasonRow key={i} index={i + 1} text={r} />
-              {photo ? (
-                <PhotoCard key={`p${i}`} src={photo.src} caption={photo.caption} />
-              ) : null}
-            </>
+            <Fragment key={i}>
+              <ReasonRow index={i + 1} text={r} />
+              {photo ? <PhotoCard src={photo.src} caption={photo.caption} /> : null}
+            </Fragment>
           );
         })}
       </ul>
