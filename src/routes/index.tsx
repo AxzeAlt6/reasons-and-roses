@@ -1,29 +1,29 @@
-/*
- * ─────────────────────────────────────────────────────────────
- *  MUSIC SETUP
- *  Drop your MP3 file into the project's `public/` folder and
- *  name it exactly:  our-song.mp3
- *  (final path: public/our-song.mp3 — served at /our-song.mp3)
- *  The player starts at 95s and loops back at 130s (the chorus).
- * ─────────────────────────────────────────────────────────────
- */
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { reasons } from "@/data/reasons";
+import song from "@/assets/our-song.mp3.asset.json";
+import p1 from "@/assets/photo1.jpeg.asset.json";
+import p2 from "@/assets/photo2.jpeg.asset.json";
+import p3 from "@/assets/photo3.jpeg.asset.json";
+import p4 from "@/assets/photo4.jpeg.asset.json";
+import p5 from "@/assets/photo5.jpeg.asset.json";
+import p6 from "@/assets/photo6.jpg.asset.json";
+import p7 from "@/assets/photo7.jpg.asset.json";
+import p8 from "@/assets/photo8.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "500 Reasons Why I Love You" },
+      { title: "500 Reasons Why I Love You — for my Nhicolit" },
       {
         name: "description",
         content:
-          "A handmade digital love letter: 500 reasons why I love you, with our song on repeat.",
+          "A handmade digital love letter for Nhicolit: 500 reasons why I love you, our photos, and our song playing softly.",
       },
       { property: "og:title", content: "500 Reasons Why I Love You" },
       {
         property: "og:description",
-        content: "A sunny, floral love letter with 500 reasons and our song.",
+        content: "A moody, candle-lit love letter with 500 reasons, our photos and our song.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -32,8 +32,16 @@ export const Route = createFileRoute("/")({
   component: LoveLetter,
 });
 
-const CHORUS_START = 95;
-const CHORUS_END = 130;
+const photos: { src: string; caption: string }[] = [
+  { src: p8.url, caption: "the day you graduated — my proudest moment." },
+  { src: p1.url, caption: "sharing one dessert, like always." },
+  { src: p2.url, caption: "matcha dates with you." },
+  { src: p3.url, caption: "our chaotic mirror selfies." },
+  { src: p7.url, caption: "you fixing my cap, me falling harder." },
+  { src: p4.url, caption: "just us, being silly again." },
+  { src: p5.url, caption: "enjoy the moment — with you, always." },
+  { src: p6.url, caption: "our little photobooth strip. 2026.05.29." },
+];
 
 function Daisy({ className = "" }: { className?: string }) {
   return (
@@ -79,10 +87,9 @@ function Heart({ className = "" }: { className?: string }) {
   );
 }
 
-function ReasonRow({ index, text }: { index: number; text: string }) {
-  const ref = useRef<HTMLLIElement>(null);
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
   const [shown, setShown] = useState(false);
-
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -100,7 +107,11 @@ function ReasonRow({ index, text }: { index: number; text: string }) {
     io.observe(el);
     return () => io.disconnect();
   }, []);
+  return { ref, shown };
+}
 
+function ReasonRow({ index, text }: { index: number; text: string }) {
+  const { ref, shown } = useReveal<HTMLLIElement>();
   return (
     <li
       ref={ref}
@@ -116,12 +127,21 @@ function ReasonRow({ index, text }: { index: number; text: string }) {
   );
 }
 
+function PhotoCard({ src, caption }: { src: string; caption: string }) {
+  const { ref, shown } = useReveal<HTMLLIElement>();
+  return (
+    <li ref={ref} className={`photo-card ${shown ? "reason-in" : "reason-out"}`}>
+      <img src={src} alt={caption} loading="lazy" className="photo-img" />
+      <p className="photo-caption">{caption}</p>
+    </li>
+  );
+}
+
 function LoveLetter() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [count, setCount] = useState(1);
 
-  // scroll counter
   useEffect(() => {
     let raf = 0;
     const onScroll = () => {
@@ -146,19 +166,6 @@ function LoveLetter() {
     };
   }, []);
 
-  // chorus loop
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const onTime = () => {
-      if (audio.currentTime >= CHORUS_END || audio.currentTime < CHORUS_START - 1) {
-        audio.currentTime = CHORUS_START;
-      }
-    };
-    audio.addEventListener("timeupdate", onTime);
-    return () => audio.removeEventListener("timeupdate", onTime);
-  }, []);
-
   const toggle = async () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -168,9 +175,6 @@ function LoveLetter() {
       return;
     }
     try {
-      if (audio.currentTime < CHORUS_START || audio.currentTime > CHORUS_END) {
-        audio.currentTime = CHORUS_START;
-      }
       await audio.play();
       setPlaying(true);
     } catch {
@@ -178,56 +182,63 @@ function LoveLetter() {
     }
   };
 
+  // interleave photos through the list
+  const step = Math.floor(reasons.length / (photos.length + 1));
+
   return (
     <main className="petal-bg relative min-h-screen overflow-x-hidden pb-32">
-      <audio ref={audioRef} src="/our-song.mp3" preload="metadata" />
+      <audio ref={audioRef} src={song.url} preload="none" loop />
 
-      {/* corner florals */}
-      <Daisy className="pointer-events-none absolute -left-8 -top-8 h-32 w-32 rotate-12 text-bloom opacity-70" />
-      <Daisy className="pointer-events-none absolute -right-10 top-24 h-24 w-24 -rotate-12 text-bloom opacity-60" />
+      <Daisy className="pointer-events-none absolute -left-8 -top-8 h-32 w-32 rotate-12 text-bloom opacity-40" />
+      <Daisy className="pointer-events-none absolute -right-10 top-24 h-24 w-24 -rotate-12 text-bloom opacity-30" />
 
       <section className="relative mx-auto flex max-w-2xl flex-col items-center px-6 pt-16 text-center sm:pt-24">
         <Sprig className="mb-4 h-8 w-32 text-gold/70" />
-        <p className="font-script text-2xl text-gold-deep">for you, always</p>
-        <h1 className="font-script mt-2 text-5xl leading-tight text-gold-deep drop-shadow-sm sm:text-7xl">
+        <p className="font-script text-3xl text-gold sm:text-4xl">
+          Hellouu my nhicolit my lab!
+        </p>
+        <p className="mt-3 font-script text-2xl text-gold-deep">this is…</p>
+        <h1 className="font-script mt-2 text-5xl leading-tight text-gold drop-shadow-sm sm:text-7xl">
           500 Reasons Why I Love You
         </h1>
         <p className="mt-5 max-w-md text-base text-foreground/70">
-          Scroll slowly. Every single one of these is true, and I ran out of space
-          before I ran out of reasons.
+          Scroll slowly. Play our song. Every single one of these is true, and I ran
+          out of space before I ran out of reasons.
         </p>
         <Sprig className="mt-6 h-8 w-32 rotate-180 text-gold/70" />
       </section>
 
       <ul className="mx-auto mt-12 flex w-full max-w-2xl flex-col gap-4 px-4 sm:px-6">
-        {reasons.map((r, i) => (
-          <ReasonRow key={i} index={i + 1} text={r} />
-        ))}
+        {reasons.map((r, i) => {
+          const photoIndex = (i + 1) % step === 0 ? (i + 1) / step - 1 : -1;
+          const photo = photoIndex >= 0 ? photos[photoIndex] : undefined;
+          return (
+            <>
+              <ReasonRow key={i} index={i + 1} text={r} />
+              {photo ? (
+                <PhotoCard key={`p${i}`} src={photo.src} caption={photo.caption} />
+              ) : null}
+            </>
+          );
+        })}
       </ul>
 
       <section className="mx-auto mt-16 max-w-2xl px-6 text-center">
         <Daisy className="mx-auto h-12 w-12 text-bloom" />
-        <p className="font-script mt-4 text-3xl text-gold-deep">
-          and 500 more tomorrow.
-        </p>
+        <p className="font-script mt-4 text-3xl text-gold">and 500 more tomorrow.</p>
       </section>
 
-      {/* floating counter */}
       <div className="counter-pill">
-        <Heart className="h-4 w-4 text-gold-deep" />
+        <Heart className="h-4 w-4 text-gold" />
         <span>
           {count} / {reasons.length}
         </span>
       </div>
 
-      {/* music button */}
       <div className="music-dock">
         <button onClick={toggle} className="music-btn" aria-pressed={playing}>
           <span className="music-note">{playing ? "❚❚" : "♫"}</span>
-          <span className="music-label">
-            {playing ? "Pause Our Song" : "🎵 Play Our Song"}
-            <em className="music-sub">'All I Need to Hear' — The 1975</em>
-          </span>
+          <span className="music-label">{playing ? "Pause Music" : "Play Music"}</span>
         </button>
       </div>
     </main>
