@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, type CSSProperties } from "react";
 import { reasons } from "@/data/reasons";
 import song from "@/assets/our-song.mp3.asset.json";
 import p1 from "@/assets/photo1.jpeg.asset.json";
@@ -79,9 +79,9 @@ function Sprig({ className = "" }: { className?: string }) {
   );
 }
 
-function Heart({ className = "" }: { className?: string }) {
+function Heart({ className = "", style }: { className?: string; style?: CSSProperties }) {
   return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" fill="currentColor">
+    <svg viewBox="0 0 24 24" className={className} style={style} aria-hidden="true" fill="currentColor">
       <path d="M12 21s-7.5-4.7-9.6-9.2C.7 8.2 2.6 4.5 6.2 4.5c2 0 3.4 1.1 4.3 2.3l1.5 2 1.5-2c.9-1.2 2.3-2.3 4.3-2.3 3.6 0 5.5 3.7 3.8 7.3C19.5 16.3 12 21 12 21z" />
     </svg>
   );
@@ -137,10 +137,88 @@ function PhotoCard({ src, caption }: { src: string; caption: string }) {
   );
 }
 
+const PETALS = Array.from({ length: 14 }, (_, i) => ({
+  left: (i * 7.7 + 4) % 96,
+  size: 9 + ((i * 13) % 13),
+  dur: 10 + ((i * 7) % 9),
+  delay: -((i * 37) % 14),
+  tone: i % 3,
+}));
+
+function Petals() {
+  return (
+    <div className="petals-layer" aria-hidden="true">
+      {PETALS.map((p, i) => (
+        <span
+          key={i}
+          className={`petal petal-${p.tone}`}
+          style={{
+            left: `${p.left}%`,
+            width: p.size,
+            height: p.size * 1.25,
+            animationDuration: `${p.dur}s`,
+            animationDelay: `${p.delay}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+const BURST_HEARTS: CSSProperties[] = Array.from({ length: 8 }, (_, i) => {
+  const a = (i / 8) * Math.PI * 2;
+  return {
+    "--bx": `${Math.cos(a) * 46}px`,
+    "--by": `${Math.sin(a) * 46}px`,
+  } as CSSProperties;
+});
+
+const FINALE_ITEMS = Array.from({ length: 14 }, (_, i) => {
+  const a = (i / 14) * Math.PI * 2;
+  const r = 70 + ((i * 53) % 90);
+  return {
+    heart: i % 2 === 0,
+    style: {
+      "--bx": `${Math.cos(a) * r}px`,
+      "--by": `${Math.sin(a) * r * 0.8 + 40}px`,
+      "--br": `${((i * 67) % 240) - 120}deg`,
+      "--fd": `${(i % 5) * 0.06}s`,
+    } as CSSProperties,
+  };
+});
+
+function Finale() {
+  const { ref, shown } = useReveal<HTMLElement>();
+  return (
+    <section
+      ref={ref}
+      className="finale relative z-10 mx-auto mt-16 max-w-2xl px-6 text-center"
+    >
+      {shown ? (
+        <span className="finale-burst" aria-hidden="true">
+          {FINALE_ITEMS.map((it, i) =>
+            it.heart ? (
+              <Heart key={i} className="finale-item finale-heart" style={it.style} />
+            ) : (
+              <span key={i} className="finale-item finale-petal" style={it.style} />
+            ),
+          )}
+        </span>
+      ) : null}
+      <Daisy className={`mx-auto h-12 w-12 text-bloom ${shown ? "daisy-spin" : ""}`} />
+      <p className="font-script mt-4 text-3xl text-gold">and 500 more tomorrow.</p>
+    </section>
+  );
+}
+
+
 function LoveLetter() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [count, setCount] = useState(1);
+  const [burst, setBurst] = useState<number | null>(null);
+  const lastCountRef = useRef(1);
+  const burstTimer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     let raf = 0;
@@ -155,7 +233,18 @@ function LoveLetter() {
             current = Number(n.dataset['reason']);
           }
         });
-        setCount(Math.min(Math.max(current, 1), reasons.length));
+        const next = Math.min(Math.max(current, 1), reasons.length);
+        const prev = lastCountRef.current;
+        if (next > prev) {
+          const milestone = Math.floor(next / 100) * 100;
+          if (milestone > 0 && milestone > Math.floor(prev / 100) * 100) {
+            setBurst(milestone);
+            window.clearTimeout(burstTimer.current);
+            burstTimer.current = window.setTimeout(() => setBurst(null), 1000);
+          }
+        }
+        lastCountRef.current = next;
+        setCount(next);
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -163,6 +252,7 @@ function LoveLetter() {
     return () => {
       window.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(raf);
+      window.clearTimeout(burstTimer.current);
     };
   }, []);
 
@@ -189,26 +279,28 @@ function LoveLetter() {
     <main className="petal-bg relative min-h-screen overflow-x-hidden pb-32">
       <audio ref={audioRef} src={song.url} preload="none" loop />
 
+      <Petals />
+
       <Daisy className="pointer-events-none absolute -left-8 -top-8 h-32 w-32 rotate-12 text-bloom opacity-40" />
       <Daisy className="pointer-events-none absolute -right-10 top-24 h-24 w-24 -rotate-12 text-bloom opacity-30" />
 
       <section className="relative mx-auto flex max-w-2xl flex-col items-center px-6 pt-16 text-center sm:pt-24">
-        <Sprig className="mb-4 h-8 w-32 text-gold/70" />
-        <p className="font-script text-3xl text-gold sm:text-4xl">
+        <Sprig className="hero-in mb-4 h-8 w-32 text-gold/70" />
+        <p className="hero-in hero-d1 font-script text-3xl text-gold sm:text-4xl">
           Hellouu my nhicolit my lab!
         </p>
-        <p className="mt-3 font-script text-2xl text-gold-deep">this is…</p>
-        <h1 className="font-script mt-2 text-5xl leading-tight text-gold drop-shadow-sm sm:text-7xl">
+        <p className="hero-in hero-d2 mt-3 font-script text-2xl text-gold-deep">this is…</p>
+        <h1 className="title-shimmer font-script mt-2 text-5xl leading-tight drop-shadow-sm sm:text-7xl">
           500 Reasons Why I Love You
         </h1>
-        <p className="mt-5 max-w-md text-base text-foreground/70">
+        <p className="hero-in hero-d4 mt-5 max-w-md text-base text-foreground/70">
           Scroll slowly. Play our song. Every single one of these is true, and I ran
           out of space before I ran out of reasons.
         </p>
-        <Sprig className="mt-6 h-8 w-32 rotate-180 text-gold/70" />
+        <Sprig className="hero-in hero-d5 mt-6 h-8 w-32 rotate-180 text-gold/70" />
       </section>
 
-      <ul className="mx-auto mt-12 flex w-full max-w-2xl flex-col gap-4 px-4 sm:px-6">
+      <ul className="relative z-10 mx-auto mt-12 flex w-full max-w-2xl flex-col gap-4 px-4 sm:px-6">
         {reasons.map((r, i) => {
           const photoIndex = (i + 1) % step === 0 ? (i + 1) / step - 1 : -1;
           const photo = photoIndex >= 0 ? photos[photoIndex] : undefined;
@@ -221,12 +313,16 @@ function LoveLetter() {
         })}
       </ul>
 
-      <section className="mx-auto mt-16 max-w-2xl px-6 text-center">
-        <Daisy className="mx-auto h-12 w-12 text-bloom" />
-        <p className="font-script mt-4 text-3xl text-gold">and 500 more tomorrow.</p>
-      </section>
+      <Finale />
 
-      <div className="counter-pill">
+      <div className={`counter-pill ${burst !== null ? "counter-pop" : ""}`}>
+        {burst !== null ? (
+          <span key={burst} className="heart-burst" aria-hidden="true">
+            {BURST_HEARTS.map((s, i) => (
+              <Heart key={i} className="burst-heart" style={s} />
+            ))}
+          </span>
+        ) : null}
         <Heart className="h-4 w-4 text-gold" />
         <span>
           {count} / {reasons.length}
@@ -234,7 +330,11 @@ function LoveLetter() {
       </div>
 
       <div className="music-dock">
-        <button onClick={toggle} className="music-btn" aria-pressed={playing}>
+        <button
+          onClick={toggle}
+          className={`music-btn ${playing ? "is-playing" : ""}`}
+          aria-pressed={playing}
+        >
           <span className="music-note">{playing ? "❚❚" : "♫"}</span>
           <span className="music-label">{playing ? "Pause Music" : "Play Music"}</span>
         </button>
